@@ -7,6 +7,7 @@ candidate_votes = int
 candidate_stats = dict()
 previous_votes = 0
 winner = str
+candidate_results = ""
 
 csvpath = os.path.join("Resources", "election_data.csv")
 with open(csvpath) as csvfile:
@@ -19,18 +20,7 @@ with open(csvpath) as csvfile:
         if line[2] not in candidate_list:
             candidate_list.append(line[2])
     
-    txtpath = os.path.join("Election Analysis.txt")
-    txtFile = open(txtpath, "w")
-    print("Election Results", file=txtFile)
-    print("------------------------", file=txtFile)
-    print ("Total Votes: " + str(total_votes), file=txtFile)
-    print("------------------------", file=txtFile)
-    
-    print("Election Results")
-    print("------------------------")
-    print ("Total Votes: " + str(total_votes))
-    print("------------------------")
-    
+
     for candidate in candidate_list:
         candidate_stats[candidate] = 0
         for votes in data_list:
@@ -42,11 +32,23 @@ with open(csvpath) as csvfile:
         elif int(candidate_stats[candidate]) > previous_votes:
             previous_votes = int(candidate_stats[candidate])
             winner = candidate
-    
-        print(candidate + ": " + str(round((candidate_stats[candidate]/total_votes)*100, 2)) + "% " + "(" + str(candidate_stats[candidate]) + ")")
-        print(candidate + ": " + str(round((candidate_stats[candidate]/total_votes)*100, 2)) + "% " + "(" + str(candidate_stats[candidate]) + ")", file=txtFile)
-    print("Winner: " + winner)
-    print("Winner: " + winner, file=txtFile)
-    txtFile.close()
+        
+        votes_percentage = round((candidate_stats[candidate]/total_votes)*100, 2)
+        votes_number = candidate_stats[candidate]
+        candidate_results += (candidate + ": " + str(votes_percentage) + "% " + "(" + str(votes_number) + ")") + "\n"
+
+
+output = "Election Results \n\
+------------------------ \n\
+Total Votes: " + str(total_votes) + "\n\
+------------------------ \n\
+"+ candidate_results + "Winner: " + winner
+
+print(output)
+
+txtpath = os.path.join("Election Analysis.txt")
+txtFile = open(txtpath, "w")
+txtFile.write(output)
+txtFile.close()
     
 
